@@ -3,14 +3,923 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
   <title>Système de Suivi du Courrier Entrant — React Multi-Sites</title>
+=======
+  <title>Système de Suivi du Courrier Entrant — Enterprise Multi-sites</title>
+>>>>>>> b1d6c2c1a75e158344a7b653f7a672c035ebb8ec
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<<<<<<< HEAD
 </head>
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+=======
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="C:\Users\dell\OneDrive\Desktop\Project\Academic\Internship\System\Images\cropped-favicon-cadyst-180x180.png" type="image/png">
+
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       HEADER TOP BAR & ROLE SWITCHER DEMO
+       ══════════════════════════════════════════════════════════════════ -->
+  <header class="top-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="brand-icon">📬</div>
+        <div class="brand-text">
+          <h1>TrackMail Enterprise</h1>
+          <span class="brand-subtitle">Gestion multi-sites du courrier entrant</span>
+        </div>
+      </div>
+
+      <!-- Demo Role Switcher -->
+      <div class="role-switcher-container">
+        <span class="role-switcher-label">🎭 Rôle Utilisateur :</span>
+        <select id="role-select" class="role-select">
+          <option value="agent">Agent courrier (Site)</option>
+          <option value="responsable">Responsable de service</option>
+          <option value="raf">RAF (Responsable Admin/Financier)</option>
+          <option value="pdg">PDG (Direction Générale)</option>
+        </select>
+      </div>
+
+      <div class="header-actions">
+        <!-- LOGOUT BUTTON (PERMANENT IN HEADER, VISIBLE FOR AGENT/RESPONSABLE) -->
+        <button type="button" id="btn-logout-header" class="btn-logout-header" title="Se déconnecter de la session active">
+          🚪 Se déconnecter
+        </button>
+
+        <button type="button" class="notif-bell-btn" title="Alertes et notifications">
+          🔔 <span id="notif-count" class="notif-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       NAVIGATION TABS & CONTEXT BAR
+       ══════════════════════════════════════════════════════════════════ -->
+  <nav class="role-tabs-bar">
+    <div class="tabs-container">
+      <button type="button" class="role-tab active" data-role="agent">
+        📥 Agent courrier
+      </button>
+      <button type="button" class="role-tab" data-role="responsable">
+        🏢 Responsable service <span id="badge-resp-tab" class="tab-badge hidden">0</span>
+      </button>
+      <button type="button" class="role-tab" data-role="raf">
+        📊 RAF (Site) <span id="badge-raf-tab" class="tab-badge badge-danger hidden">0</span>
+      </button>
+      <button type="button" class="role-tab" data-role="pdg">
+        🌐 PDG (Groupe) <span id="badge-pdg-tab" class="tab-badge badge-danger hidden">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Context Sub-Bar (Active Site, Service, Agent, Responsable) -->
+  <div class="context-bar">
+    <div class="context-container">
+      <div class="context-selector-group">
+        <!-- Site Field -->
+        <div class="context-field" id="ctx-site-field">
+          <label for="ctx-site-select">📍 Site actif :</label>
+          <select id="ctx-site-select" class="ctx-select"></select>
+        </div>
+
+        <!-- Service Field (Responsable) -->
+        <div class="context-field" id="ctx-service-field" style="display: none;">
+          <label for="ctx-service-select">🏬 Service :</label>
+          <select id="ctx-service-select" class="ctx-select"></select>
+          <button type="button" id="btn-open-add-service" class="btn-link" title="Créer un service">+ Service</button>
+        </div>
+
+        <!-- Active Agent Field -->
+        <div class="context-field" id="ctx-agent-field">
+          <label for="ctx-agent-select">👤 Agent actif :</label>
+          <select id="ctx-agent-select" class="ctx-select"></select>
+        </div>
+
+        <!-- Active Responsable Field -->
+        <div class="context-field" id="ctx-responsable-field" style="display: none;">
+          <label for="ctx-resp-select">👤 Responsable actif :</label>
+          <select id="ctx-resp-select" class="ctx-select"></select>
+        </div>
+
+        <!-- Active RAF Field -->
+        <div class="context-field" id="ctx-raf-field" style="display: none;">
+          <label for="ctx-raf-select">👤 RAF actif :</label>
+          <select id="ctx-raf-select" class="ctx-select"></select>
+        </div>
+      </div>
+
+      <div id="user-profile-summary" class="user-profile-summary">
+        <!-- Dynamic user badge injection -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+       ══════════════════════════════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ÉCRAN 1 : AGENT COURRIER
+         ──────────────────────────────────────────────────────────────── -->
+    <section id="view-agent" class="dashboard-view active">
+      <div class="view-header">
+        <div>
+          <h2>Enregistrement &amp; Distribution du Courrier</h2>
+          <p class="view-subtitle">Guichet de réception pour <strong id="agent-site-name">Paris — Siège Social</strong></p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <!-- SIMULATION BUTTON MOVED INSIDE AGENT VIEW -->
+          <button type="button" id="btn-simu-courrier" class="btn-simu">
+            ⚡ Simuler réception
+          </button>
+          <div id="agent-user-badge" class="user-role-tag">
+            👤 Agent : Sophie Martin
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Form Panel -->
+        <div class="card-panel">
+          <h3>Enregistrer un courrier entrant</h3>
+
+          <!-- LOGGED OUT NOTICE BANNER FOR AGENT -->
+          <div id="agent-logout-notice" class="alert-notice-banner hidden">
+            ⚠️ Vous êtes déconnecté. Veuillez sélectionner un agent actif dans la barre supérieure pour pouvoir enregistrer du courrier.
+          </div>
+
+          <form id="form-courrier">
+            <div class="form-group">
+              <label for="expediteur">Expéditeur *</label>
+              <input type="text" id="expediteur" class="form-control" placeholder="Ex: URSSAF, Client X, Banque..." required>
+            </div>
+
+            <div class="form-group">
+              <div class="flex-label-row">
+                <label for="type-courrier">Type de courrier *</label>
+                <button type="button" id="btn-add-type-inline" class="btn-link">+ Créer un type</button>
+              </div>
+              <select id="type-courrier" class="form-control" required></select>
+            </div>
+
+            <div class="form-group">
+              <div class="flex-label-row">
+                <label>Services destinataires * (Cocher un ou plusieurs)</label>
+                <button type="button" id="btn-add-service-inline" class="btn-link">+ Créer un service</button>
+              </div>
+              <div id="service-dest-multi-box" class="multi-select-box">
+                <!-- Checkboxes populated dynamically -->
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cotation">Cotation / Référence (Optionnel)</label>
+              <input type="text" id="cotation" class="form-control" placeholder="Ex: RH-2026-042 ou champ libre">
+            </div>
+
+            <div class="form-group">
+              <label>Scan du document (Simulé)</label>
+              <div id="upload-zone" class="dropzone">
+                <div class="dropzone-text">📂 Cliquer ou glisser-déposer un fichier PDF / Image</div>
+                <div id="upload-filename" class="filename-preview"></div>
+                <input type="file" id="fichier" class="hidden" accept=".pdf,.png,.jpg,.jpeg">
+              </div>
+            </div>
+
+            <button type="submit" id="btn-submit-agent-form" class="btn btn-primary btn-full">
+              📥 Enregistrer et distribuer le courrier
+            </button>
+          </form>
+        </div>
+
+        <!-- Mail List Panel -->
+        <div class="card-panel">
+          <div class="flex-between" style="margin-bottom: 1rem;">
+            <h3>Courriers enregistrés du site</h3>
+            <input type="text" id="agent-search" class="form-control" style="width: 240px;" placeholder="🔍 Rechercher (Réf, expéditeur...)">
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="agent-table">
+              <thead>
+                <tr>
+                  <th>Réf ID</th>
+                  <th>Expéditeur</th>
+                  <th>Type</th>
+                  <th>Services Destinataires</th>
+                  <th>Date Réception</th>
+                  <th>Cotation</th>
+                  <th>Enregistré Par</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dynamic rows -->
+              </tbody>
+            </table>
+          </div>
+          <div id="agent-empty" class="empty-state hidden">Aucun courrier trouvé pour ce site.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ÉCRAN 2 : RESPONSABLE DE SERVICE
+         ──────────────────────────────────────────────────────────────── -->
+    <section id="view-responsable" class="dashboard-view">
+      <div class="view-header">
+        <div>
+          <h2>Espace Responsable de Service</h2>
+          <p id="resp-subtitle-manager" class="view-subtitle">Dossier de service géré par Thomas Dupont</p>
+        </div>
+        <div class="flex-group" style="display: flex; gap: 0.5rem;">
+          <span id="resp-site-badge" class="badge-site">Paris — Siège Social</span>
+          <span id="resp-service-badge" class="status-pill status-recu">Ressources Humaines</span>
+        </div>
+      </div>
+
+      <!-- LOGGED OUT NOTICE BANNER FOR RESPONSABLE -->
+      <div id="resp-logout-banner" class="alert-notice-banner hidden">
+        ⚠️ Aucun responsable connecté. Veuillez vous connecter en sélectionnant un responsable actif dans la barre supérieure pour pouvoir accuser réception et traiter les courriers.
+      </div>
+
+      <div class="card-panel">
+        <div class="flex-between" style="margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <h3>Courriers du Service</h3>
+            <span id="resp-new-count" class="status-pill status-recu">0 nouveau(x)</span>
+          </div>
+
+          <div id="resp-filter-pills" class="filter-pills">
+            <button type="button" class="pill-filter active" data-filter="all">Tous</button>
+            <button type="button" class="pill-filter" data-filter="reçu">Reçus (Non déchargés)</button>
+            <button type="button" class="pill-filter" data-filter="distribué">Déchargés</button>
+            <button type="button" class="pill-filter" data-filter="en cours">En cours</button>
+            <button type="button" class="pill-filter" data-filter="traité">Traités</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="resp-table">
+            <thead>
+              <tr>
+                <th>Réf ID</th>
+                <th>Expéditeur</th>
+                <th>Type</th>
+                <th>Reçu le</th>
+                <th>Statut</th>
+                <th>Commentaires &amp; Trace Décharge</th>
+                <th>Actions Workflow</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+        <div id="resp-empty" class="empty-state hidden">Aucun courrier dans cette catégorie.</div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ÉCRAN 3 : RAF (RESPONSABLE ADMIN & FINANCIER)
+         ──────────────────────────────────────────────────────────────── -->
+    <section id="view-raf" class="dashboard-view">
+      <div class="view-header">
+        <div>
+          <h2>Synthèse Site — Contrôle &amp; Alertes Retards</h2>
+          <p class="view-subtitle">Vue d'ensemble pour le site de <strong id="raf-site-badge">Paris — Siège Social</strong></p>
+        </div>
+        <div class="flex-group" style="display: flex; gap: 0.5rem; align-items: center;">
+          <select id="raf-service-filter" class="ctx-select">
+            <option value="all">Tous les services du site</option>
+          </select>
+          <div id="raf-user-badge" class="user-role-tag">
+            👤 RAF : Nadia Benali
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-card-label">Total Courriers Reçus</div>
+          <div id="raf-stat-total" class="kpi-card-value">0</div>
+        </div>
+        <div class="kpi-card kpi-warning">
+          <div class="kpi-card-label">En attente / En cours</div>
+          <div id="raf-stat-pending" class="kpi-card-value">0</div>
+        </div>
+        <div class="kpi-card kpi-success">
+          <div class="kpi-card-label">Courriers Traités</div>
+          <div id="raf-stat-done" class="kpi-card-value">0</div>
+        </div>
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-card-label">Courriers en Retard (>48h)</div>
+          <div id="raf-stat-retard" class="kpi-card-value">0</div>
+        </div>
+      </div>
+
+      <!-- Overdue Mails Section -->
+      <div class="card-panel" style="margin-bottom: 1.5rem; border-color: #fecaca;">
+        <h3 style="color: var(--color-danger);">
+          🚨 Courriers en retard de traitement (>48h non traités)
+          <span id="raf-retard-pill" class="status-pill status-recu" style="background-color: #fef2f2; color: #dc2626;">0 alerte(s)</span>
+        </h3>
+
+        <div class="table-responsive">
+          <table class="data-table" id="raf-retard-table">
+            <thead>
+              <tr>
+                <th>Réf ID</th>
+                <th>Expéditeur</th>
+                <th>Services Destinataires</th>
+                <th>Date Réception</th>
+                <th>Délai Écoulé</th>
+                <th>Statut Actuel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic overdue rows -->
+            </tbody>
+          </table>
+        </div>
+        <div id="raf-retard-empty" class="empty-state hidden">🎉 Aucun courrier en retard sur ce site !</div>
+      </div>
+
+      <!-- Service Breakdown -->
+      <div class="card-panel" style="margin-bottom: 1.5rem;">
+        <h3>📊 Répartition par Service du Site</h3>
+        <div id="raf-service-breakdown" class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+          <!-- Dynamic cards for services -->
+        </div>
+      </div>
+
+      <!-- All Mails Site Table -->
+      <div class="card-panel">
+        <h3>Registre exhaustif du Site</h3>
+        <div class="table-responsive">
+          <table class="data-table" id="raf-all-table">
+            <thead>
+              <tr>
+                <th>Réf ID</th>
+                <th>Expéditeur</th>
+                <th>Type</th>
+                <th>Services Destinataires</th>
+                <th>Date Réception</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Personnel & User Accounts Management Section -->
+      <div class="card-panel" style="margin-top: 1.5rem;">
+        <div class="flex-between" style="margin-bottom: 1rem;">
+          <div>
+            <h3>👥 Gestion du Personnel du Site &amp; Comptes Utilisateurs</h3>
+            <p style="font-size: 0.82rem; color: var(--color-text-muted);">Agents, Responsables de Service &amp; RAF (Désactivation logique uniquement)</p>
+          </div>
+          <button type="button" id="btn-open-add-user" class="btn btn-primary btn-sm">
+            ➕ Nouveau Compte Utilisateur
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Nom complet</th>
+                <th>Rôle</th>
+                <th>Site d'affectation</th>
+                <th>Service attribué</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic user rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ÉCRAN 4 : PDG (DIRECTION GÉNÉRALE)
+         ──────────────────────────────────────────────────────────────── -->
+    <section id="view-pdg" class="dashboard-view">
+      <div class="view-header">
+        <div>
+          <h2>Consolidation Nationale — Direction Groupe</h2>
+          <p class="view-subtitle">Supervision multi-sites et performance opérationnelle globale</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <select id="pdg-site-filter" class="ctx-select">
+            <option value="all">Tous les sites (Global Groupe)</option>
+          </select>
+          <select id="pdg-service-filter" class="ctx-select">
+            <option value="all">Tous les services (Global)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Global KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-card-label">Volume Total Groupe</div>
+          <div id="pdg-stat-total" class="kpi-card-value">0</div>
+        </div>
+        <div class="kpi-card kpi-warning">
+          <div class="kpi-card-label">Total en Attente</div>
+          <div id="pdg-stat-pending" class="kpi-card-value">0</div>
+        </div>
+        <div class="kpi-card kpi-success">
+          <div class="kpi-card-label">Taux d'Éradication Traités</div>
+          <div id="pdg-stat-rate" class="kpi-card-value">0%</div>
+        </div>
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-card-label">Alertes Retard Groupe (>48h)</div>
+          <div id="pdg-stat-retard" class="kpi-card-value">0</div>
+        </div>
+      </div>
+
+      <!-- Multi-site Comparison Cards -->
+      <div class="card-panel" style="margin-bottom: 1.5rem;">
+        <h3>🏢 Comparatif de Performance par Site</h3>
+        <div id="pdg-site-breakdown" class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+          <!-- Dynamic cards for each site -->
+        </div>
+      </div>
+
+      <!-- Consolidated Overdue Table -->
+      <div class="card-panel" style="border-color: #fecaca;">
+        <h3 style="color: var(--color-danger);">
+          🚨 Tableau de Bord des Retards Réseau (>48h non traités)
+          <span id="pdg-retard-pill" class="status-pill status-recu" style="background-color: #fef2f2; color: #dc2626;">0 alerte Groupe</span>
+        </h3>
+
+        <div class="table-responsive">
+          <table class="data-table" id="pdg-retard-table">
+            <thead>
+              <tr>
+                <th>Réf ID</th>
+                <th>Site</th>
+                <th>Services Destinataires</th>
+                <th>Expéditeur</th>
+                <th>Date Réception</th>
+                <th>Retard Écoulé</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic overdue rows across group -->
+            </tbody>
+          </table>
+        </div>
+        <div id="pdg-retard-empty" class="empty-state hidden">🎉 Aucun courrier en retard dans tout le groupe !</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       MODALS & OVERLAYS
+       ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- Modal Accusé Réception & Décharge -->
+  <div id="modal-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📩 Validation de la Décharge Numérique</h3>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 0.75rem;">Vous êtes sur le point d'accuser réception de ce courrier et de valider sa décharge interne.</p>
+        <div id="modal-detail" class="modal-detail-box"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="modal-cancel" class="btn btn-secondary">Annuler</button>
+        <button type="button" id="modal-confirm" class="btn btn-primary">🔒 Signer &amp; Accuser réception</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Création Nouveau Type de Courrier -->
+  <div id="modal-type-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🏷️ Nouveau Type de Courrier</h3>
+      </div>
+      <form id="form-add-type">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-type-name">Intitulé du type *</label>
+            <input type="text" id="new-type-name" class="form-control" placeholder="Ex: Juridique, Recouvrement, RH..." required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer le type</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Création Nouveau Service avec Portée Multi-site -->
+  <div id="modal-service-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🏬 Nouveau Service Destinataire</h3>
+      </div>
+      <form id="form-add-service">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-service-name">Nom du service *</label>
+            <input type="text" id="new-service-name" class="form-control" placeholder="Ex: Achats & Logistique, Juridique..." required>
+          </div>
+
+          <div class="form-group">
+            <label for="new-service-site">Site principal *</label>
+            <select id="new-service-site" class="form-control" required></select>
+          </div>
+
+          <!-- POINT 4: MULTI-SITE SCOPE RADIO -->
+          <div class="form-group">
+            <label>Étendue de création *</label>
+            <div class="radio-group-vertical">
+              <label class="radio-pill">
+                <input type="radio" name="new-service-scope" value="current" checked>
+                <span>Appliquer uniquement au site actuel</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="new-service-scope" value="selected">
+                <span>Appliquer aux sites sélectionnés</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="new-service-scope" value="all">
+                <span>Appliquer à TOUS les sites du groupe</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="new-service-sites-box-wrapper" class="form-group" style="display: none;">
+            <label>Cocher les sites cibles :</label>
+            <div id="new-service-sites-box" class="multi-select-box"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer le service</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Édition de Service avec Portée Multi-site -->
+  <div id="modal-edit-service-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Modifier / Renommer le Service</h3>
+      </div>
+      <form id="form-edit-service">
+        <input type="hidden" id="edit-service-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-service-name">Nouveau nom du service *</label>
+            <input type="text" id="edit-service-name" class="form-control" required>
+          </div>
+
+          <!-- POINT 4: MULTI-SITE SCOPE RADIO FOR EDIT -->
+          <div class="form-group">
+            <label>Étendue du renommage *</label>
+            <div class="radio-group-vertical">
+              <label class="radio-pill">
+                <input type="radio" name="edit-service-scope" value="current" checked>
+                <span>Appliquer uniquement au site actuel</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="edit-service-scope" value="selected">
+                <span>Appliquer aux sites sélectionnés</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="edit-service-scope" value="all">
+                <span>Appliquer à TOUS les sites du groupe</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="edit-service-sites-box-wrapper" class="form-group" style="display: none;">
+            <label>Cocher les sites cibles :</label>
+            <div id="edit-service-sites-box" class="multi-select-box"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Portée de la Désactivation de Service -->
+  <div id="modal-delete-service-scope-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color: var(--color-danger);">🔒 Portée de la désactivation du service</h3>
+      </div>
+      <form id="form-delete-service-scope">
+        <input type="hidden" id="delete-service-id">
+        <div class="modal-body">
+          <p id="delete-service-scope-info" style="margin-bottom: 1rem;"></p>
+
+          <div class="form-group">
+            <label>Étendue de la désactivation *</label>
+            <div class="radio-group-vertical">
+              <label class="radio-pill">
+                <input type="radio" name="delete-service-scope" value="current" checked>
+                <span>Site actuel uniquement</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="delete-service-scope" value="selected">
+                <span>Sites sélectionnés</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="delete-service-scope" value="all">
+                <span>Tous les sites du groupe</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="delete-service-sites-box-wrapper" class="form-group" style="display: none;">
+            <label>Cocher les sites cibles :</label>
+            <div id="delete-service-sites-box" class="multi-select-box"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-danger">Continuer la désactivation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Réaffectation Obligatoire lors de la Désactivation de Service -->
+  <div id="modal-realloc-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color: var(--color-warning);">⚠️ Réaffectation Obligatoire &amp; Désactivation des Services</h3>
+      </div>
+      <form id="form-realloc-service">
+        <div class="modal-body">
+          <p id="modal-realloc-info" style="margin-bottom: 1rem;"></p>
+          <div id="realloc-sites-container"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Transférer &amp; Désactiver les services</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Création Agent Courrier -->
+  <div id="modal-agent-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📥 Nouveau Réceptionniste / Agent Courrier</h3>
+      </div>
+      <form id="form-add-agent">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-agent-name">Nom complet *</label>
+            <input type="text" id="new-agent-name" class="form-control" placeholder="Ex: Jean Dupont" required>
+          </div>
+          <div class="form-group">
+            <label for="new-agent-site">Site d'attache *</label>
+            <select id="new-agent-site" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer l'agent</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Édition Complète Agent Courrier -->
+  <div id="modal-edit-agent-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Modifier la Fiche Agent Courrier</h3>
+      </div>
+      <form id="form-edit-agent">
+        <input type="hidden" id="edit-agent-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-agent-name">Nom complet *</label>
+            <input type="text" id="edit-agent-name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-agent-site">Site d'affectation *</label>
+            <select id="edit-agent-site" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Création Responsable de Service -->
+  <div id="modal-resp-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👤 Nouveau Responsable de Service</h3>
+      </div>
+      <form id="form-add-resp">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-resp-name">Nom complet *</label>
+            <input type="text" id="new-resp-name" class="form-control" placeholder="Ex: Marc Vasseur" required>
+          </div>
+          <div class="form-group">
+            <label for="new-resp-site">Site d'attache *</label>
+            <select id="new-resp-site" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label for="new-resp-service">Service attribué *</label>
+            <select id="new-resp-service" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer le responsable</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Édition Complète Responsable de Service -->
+  <div id="modal-edit-resp-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Modifier la Fiche Responsable de Service</h3>
+      </div>
+      <form id="form-edit-resp">
+        <input type="hidden" id="edit-resp-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-resp-name">Nom complet *</label>
+            <input type="text" id="edit-resp-name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-resp-site">Site d'attache *</label>
+            <select id="edit-resp-site" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label for="edit-resp-service">Service attribué *</label>
+            <select id="edit-resp-service" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Création RAF -->
+  <div id="modal-raf-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📊 Nouveau RAF (Responsable Admin &amp; Financier)</h3>
+      </div>
+      <form id="form-add-raf">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-raf-name">Nom complet du RAF *</label>
+            <input type="text" id="new-raf-name" class="form-control" placeholder="Ex: Nadia Benali" required>
+          </div>
+          <div class="form-group">
+            <label for="new-raf-site">Site d'affectation *</label>
+            <select id="new-raf-site" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer et Connecter le RAF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Édition Complète RAF -->
+  <div id="modal-edit-raf-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Modifier la Fiche RAF</h3>
+      </div>
+      <form id="form-edit-raf">
+        <input type="hidden" id="edit-raf-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-raf-name">Nom complet *</label>
+            <input type="text" id="edit-raf-name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-raf-site">Site d'attache *</label>
+            <select id="edit-raf-site" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Création / Édition Unifiée d'Utilisateur -->
+  <div id="modal-user-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-user-title">👤 Nouveau Compte Utilisateur</h3>
+      </div>
+      <form id="form-user">
+        <input type="hidden" id="user-id">
+        <input type="hidden" id="user-original-role">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="user-name">Nom complet *</label>
+            <input type="text" id="user-name" class="form-control" placeholder="Ex: Jean Dupont" required>
+          </div>
+
+          <div class="form-group">
+            <label for="user-role">Rôle utilisateur *</label>
+            <select id="user-role" class="form-control" required>
+              <option value="agent">Agent Courrier (Réceptionniste)</option>
+              <option value="responsable">Responsable de Service</option>
+              <option value="raf">RAF (Responsable Admin &amp; Financier)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="user-site">Site d'affectation *</label>
+            <select id="user-site" class="form-control" required></select>
+          </div>
+
+          <div class="form-group" id="user-service-wrapper" style="display: none;">
+            <label for="user-service">Service attribué *</label>
+            <select id="user-service" class="form-control"></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-user">Enregistrer le compte</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Historique des Statuts Utilisateur -->
+  <div id="modal-history-overlay" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-history-title">📜 Historique des Statuts du Compte</h3>
+      </div>
+      <div class="modal-body">
+        <div id="modal-history-content">
+          <!-- Dynamic history list -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+>>>>>>> b1d6c2c1a75e158344a7b653f7a672c035ebb8ec
 </body>
 </html>
