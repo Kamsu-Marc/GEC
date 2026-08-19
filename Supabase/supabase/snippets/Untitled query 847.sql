@@ -1,0 +1,1 @@
+SELECT nom, role, auth_user_id FROM utilisateurs;

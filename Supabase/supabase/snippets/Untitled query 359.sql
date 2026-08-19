@@ -1,0 +1,1 @@
+SELECT generer_prochaine_cotation('1896aa53-d4e8-4bb8-8d26-bc4076dc118f');

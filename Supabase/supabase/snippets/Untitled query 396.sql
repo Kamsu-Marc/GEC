@@ -1,0 +1,1 @@
+ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS auth_user_id UUID REFERENCES auth.users(id);
